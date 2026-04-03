@@ -17,7 +17,7 @@ from datetime import datetime
 learning_rate  = 0.0002
 gamma          = 0.98
 n_rollout      = 10
-n_episodes     = 300
+n_episodes     = 3000
 print_interval = 20
 video_interval = 300
 env_name       = "CartPole-v1"
