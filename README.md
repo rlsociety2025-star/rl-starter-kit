@@ -47,9 +47,30 @@ tensorboard --logdir=~/tb_logs/REINFORCE
 python actor_critic.py
 ```
 
-- REINFORCE와 동일한 CartPole-v1 환경 사용
-- Actor(정책)와 Critic(가치함수)을 동시에 학습
-- n-step(10) rollout 기반 TD 학습
+학습 완료 후 TensorBoard로 결과 확인:
+
+```bash
+tensorboard --logdir=~/tb_logs/ActorCritic
+```
+
+브라우저에서 http://localhost:6006 접속
+
+- **SCALARS 탭**: 학습 곡선
+- **IMAGES 탭**: CartPole 영상 (학습 전/후 비교)
+
+### REINFORCE vs Actor-Critic 비교
+
+| | REINFORCE | Actor-Critic |
+|---|---|---|
+| 네트워크 | Policy만 사용 | Policy(Actor) + Value(Critic) |
+| 업데이트 | 에피소드 끝난 후 | n-step(10) rollout마다 |
+| 분산 | 높음 (Monte Carlo) | 낮음 (TD 기반 baseline) |
+
+두 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
+
+```bash
+tensorboard --logdir=~/tb_logs
+```
 
 ## 개발환경
 
