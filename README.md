@@ -13,7 +13,8 @@ rl-starter-kit/
 ├── README.md
 ├── 개발환경.md
 ├── REINFORCE.py      ← REINFORCE 알고리즘 (CartPole-v1)
-└── actor_critic.py   ← Actor-Critic 알고리즘 (CartPole-v1)
+├── actor_critic.py   ← Actor-Critic 알고리즘 (CartPole-v1)
+└── PPO.py            ← PPO 알고리즘 (CartPole-v1)
 ```
 
 ## 시작하기
@@ -53,20 +54,29 @@ python actor_critic.py
 tensorboard --logdir=~/tb_logs/ActorCritic
 ```
 
-브라우저에서 http://localhost:6006 접속
+### PPO
 
-- **SCALARS 탭**: 학습 곡선
-- **IMAGES 탭**: CartPole 영상 (학습 전/후 비교)
+```bash
+python PPO.py
+```
 
-### REINFORCE vs Actor-Critic 비교
+학습 완료 후 TensorBoard로 결과 확인:
 
-| | REINFORCE | Actor-Critic |
-|---|---|---|
-| 네트워크 | Policy만 사용 | Policy(Actor) + Value(Critic) |
-| 업데이트 | 에피소드 끝난 후 | n-step(10) rollout마다 |
-| 분산 | 높음 (Monte Carlo) | 낮음 (TD 기반 baseline) |
+```bash
+tensorboard --logdir=~/tb_logs/PPO
+```
 
-두 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
+### 알고리즘 비교
+
+| | REINFORCE | Actor-Critic | PPO |
+|---|---|---|---|
+| 네트워크 | Policy만 | Policy + Value | Policy + Value |
+| 업데이트 | 에피소드 끝난 후 | n-step rollout마다 | n-step rollout마다 |
+| 데이터 재사용 | 1회 | 1회 | K회 (K_epoch=3) |
+| 분산 | 높음 (MC) | 낮음 (TD) | 더 낮음 (GAE + clipping) |
+| 핵심 추가 | - | TD error as baseline | GAE + clipped ratio |
+
+세 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
 
 ```bash
 tensorboard --logdir=~/tb_logs
@@ -74,11 +84,11 @@ tensorboard --logdir=~/tb_logs
 
 ## 개발환경
 
-[개발환경.md]참조
+[개발환경.md](개발환경.md) 참조
 
 ## 라이선스
 
-알고리즘 코드 원본: [minimalRL](https://github.com/seungeunrho/minimalRL) (MIT License, Copyright (c) 2019 Seungeun Rho)
+알고리즘 코드 원본: [minimalRL](https://github.com/seungeunrho/minimalRL) (MIT License, Copyright (c) 2019 seungeunrho)
 
 ## 링크
 
