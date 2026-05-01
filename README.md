@@ -14,7 +14,8 @@ rl-starter-kit/
 ├── 개발환경.md
 ├── REINFORCE.py      ← REINFORCE 알고리즘 (CartPole-v1)
 ├── actor_critic.py   ← Actor-Critic 알고리즘 (CartPole-v1)
-└── PPO.py            ← PPO 알고리즘 (CartPole-v1)
+├── ppo.py            ← PPO 알고리즘 (CartPole-v1)
+└── dqn.py            ← DQN 알고리즘 (CartPole-v1)
 ```
 
 ## 시작하기
@@ -57,7 +58,7 @@ tensorboard --logdir=~/tb_logs/ActorCritic
 ### PPO
 
 ```bash
-python PPO.py
+python ppo.py
 ```
 
 학습 완료 후 TensorBoard로 결과 확인:
@@ -66,17 +67,32 @@ python PPO.py
 tensorboard --logdir=~/tb_logs/PPO
 ```
 
+### DQN
+
+```bash
+python dqn.py
+```
+
+학습 완료 후 TensorBoard로 결과 확인:
+
+```bash
+tensorboard --logdir=~/tb_logs/DQN
+```
+
 ### 알고리즘 비교
 
-| | REINFORCE | Actor-Critic | PPO |
-|---|---|---|---|
-| 네트워크 | Policy만 | Policy + Value | Policy + Value |
-| 업데이트 | 에피소드 끝난 후 | n-step rollout마다 | n-step rollout마다 |
-| 데이터 재사용 | 1회 | 1회 | K회 (K_epoch=3) |
-| 분산 | 높음 (MC) | 낮음 (TD) | 더 낮음 (GAE + clipping) |
-| 핵심 추가 | - | TD error as baseline | GAE + clipped ratio |
+| | REINFORCE | Actor-Critic | PPO | DQN |
+|---|---|---|---|---|
+| 계열 | Policy Gradient | Policy Gradient | Policy Gradient | Value-based |
+| 네트워크 | Policy만 | Policy + Value | Policy + Value | Q-network + Target Q |
+| 학습 방식 | On-policy | On-policy | On-policy | Off-policy (Replay Buffer) |
+| 탐험 | 확률적 정책 | 확률적 정책 | 확률적 정책 | ε-greedy |
+| 업데이트 | 에피소드 끝난 후 | n-step rollout마다 | n-step rollout마다 | 매 에피소드 후 batch 샘플링 |
+| 데이터 재사용 | 1회 | 1회 | K회 (K_epoch=3) | Buffer 내 반복 사용 |
+| 분산 | 높음 (MC) | 낮음 (TD) | 더 낮음 (GAE + clipping) | 낮음 (TD + Target net) |
+| 핵심 추가 | - | TD error as baseline | GAE + clipped ratio | Replay Buffer + Target Network |
 
-세 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
+네 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
 
 ```bash
 tensorboard --logdir=~/tb_logs
