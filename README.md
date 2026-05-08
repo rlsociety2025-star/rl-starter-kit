@@ -15,7 +15,8 @@ rl-starter-kit/
 ├── REINFORCE.py      ← REINFORCE 알고리즘 (CartPole-v1)
 ├── actor_critic.py   ← Actor-Critic 알고리즘 (CartPole-v1)
 ├── ppo.py            ← PPO 알고리즘 (CartPole-v1)
-└── dqn.py            ← DQN 알고리즘 (CartPole-v1)
+├── dqn.py            ← DQN 알고리즘 (CartPole-v1)
+└── ddpg.py           ← DDPG 알고리즘 (Pendulum-v1)
 ```
 
 ## 시작하기
@@ -79,20 +80,38 @@ python dqn.py
 tensorboard --logdir=~/tb_logs/DQN
 ```
 
+### DDPG
+
+```bash
+python ddpg.py
+```
+
+학습 완료 후 TensorBoard로 결과 확인:
+
+```bash
+tensorboard --logdir=~/tb_logs/DDPG
+```
+
+브라우저에서 http://localhost:6006 접속
+
+- **SCALARS 탭**: 학습 곡선 (Pendulum reward는 음수, -200에 가까울수록 잘 학습됨)
+- **IMAGES 탭**: Pendulum 영상 (학습 후엔 막대가 위쪽에 서 있어야 함)
+
 ### 알고리즘 비교
 
-| | REINFORCE | Actor-Critic | PPO | DQN |
-|---|---|---|---|---|
-| 계열 | Policy Gradient | Policy Gradient | Policy Gradient | Value-based |
-| 네트워크 | Policy만 | Policy + Value | Policy + Value | Q-network + Target Q |
-| 학습 방식 | On-policy | On-policy | On-policy | Off-policy (Replay Buffer) |
-| 탐험 | 확률적 정책 | 확률적 정책 | 확률적 정책 | ε-greedy |
-| 업데이트 | 에피소드 끝난 후 | n-step rollout마다 | n-step rollout마다 | 매 에피소드 후 batch 샘플링 |
-| 데이터 재사용 | 1회 | 1회 | K회 (K_epoch=3) | Buffer 내 반복 사용 |
-| 분산 | 높음 (MC) | 낮음 (TD) | 더 낮음 (GAE + clipping) | 낮음 (TD + Target net) |
-| 핵심 추가 | - | TD error as baseline | GAE + clipped ratio | Replay Buffer + Target Network |
+| | REINFORCE | Actor-Critic | PPO | DQN | DDPG |
+|---|---|---|---|---|---|
+| 환경 | CartPole | CartPole | CartPole | CartPole | Pendulum |
+| Action space | Discrete (2) | Discrete (2) | Discrete (2) | Discrete (2) | Continuous [-2, 2] |
+| 계열 | Policy Gradient | Policy Gradient | Policy Gradient | Value-based | Actor-Critic (Off-policy) |
+| 네트워크 | Policy만 | Policy + Value | Policy + Value | Q-network + Target Q | Actor + Critic (각각 Target) |
+| 학습 방식 | On-policy | On-policy | On-policy | Off-policy (Replay Buffer) | Off-policy (Replay Buffer) |
+| 탐험 | 확률적 정책 | 확률적 정책 | 확률적 정책 | ε-greedy | OU Noise |
+| Target update | - | - | - | Hard copy (20 epi) | Soft update (τ=0.005) |
+| 데이터 재사용 | 1회 | 1회 | K회 (K_epoch=3) | Buffer 반복 | Buffer 반복 |
+| 핵심 추가 | - | TD error as baseline | GAE + clipped ratio | Replay Buffer + Target Network | Deterministic Policy + OU Noise |
 
-네 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
+다섯 알고리즘의 TensorBoard 로그를 동시에 비교하려면:
 
 ```bash
 tensorboard --logdir=~/tb_logs
